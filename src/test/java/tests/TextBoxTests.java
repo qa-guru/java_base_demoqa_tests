@@ -1,6 +1,7 @@
 package tests;
 
 import com.github.javafaker.Faker;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
@@ -9,6 +10,8 @@ import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 import static tests.testdata.TestData.*;
+import static utils.RandomUtils.getRandomEmail;
+import static utils.RandomUtils.getRandomString;
 
 public class TextBoxTests extends TestBase {
 
@@ -71,7 +74,51 @@ public class TextBoxTests extends TestBase {
     }
 
 
+    @Test
+    void successfulFillFormTest_with_utils() {
+        String userName = getRandomString(10);
+        String userEmail = getRandomEmail();
+        String currentAddress = getRandomString(100);
+        String permanentAddress = getRandomString(90);
 
+        textBoxPage.openPage();
+        textBoxPage.typeUserName(userName);
+        textBoxPage.typeUserEmail(userEmail);
+        $("[id=currentAddress]").setValue(currentAddress);
+        $("[id=permanentAddress]").setValue(permanentAddress);
+        textBoxPage.submitForm();
+
+        textBoxPage.checkField("name", userName);
+        textBoxPage.checkField("email", userEmail);
+        $("[id=output] [id=currentAddress]").shouldHave(text(currentAddress));
+        $("[id=output] [id=permanentAddress]").shouldHave(text(permanentAddress));
+    }
+
+    String userNameU;
+    String userEmailU;
+    String currentAddressU;
+    String permanentAddressU;
+
+    @BeforeEach
+    void prepareRandomData() {
+        userNameU = getRandomString(10);
+        userEmailU = getRandomEmail();
+    }
+
+    @Test
+    void successfulFillFormTest_with_utils_with_before_each() {
+        textBoxPage.openPage();
+        textBoxPage.typeUserName(userNameU);
+        textBoxPage.typeUserEmail(userEmailU);
+        $("[id=currentAddress]").setValue(currentAddressU);
+        $("[id=permanentAddress]").setValue(permanentAddressU);
+        textBoxPage.submitForm();
+
+        textBoxPage.checkField("name", userNameU);
+        textBoxPage.checkField("email", userEmailU);
+        $("[id=output] [id=currentAddress]").shouldHave(text(currentAddressU));
+        $("[id=output] [id=permanentAddress]").shouldHave(text(permanentAddressU));
+    }
 
 
     @Test
